@@ -1,65 +1,57 @@
-//实现一个矩阵类模版
-#include<vector>
-using namespace std;
+// matrix.cpp —— matrix 类模板的函数定义（由 matrix.h 末尾 #include 进来）
+// 因为是模板，函数定义必须对使用者可见，所以被头文件包含，
+// 而不是像普通类那样单独编译。函数名上方的注释都在 matrix.h 里。
+
+#include <utility>      // std::move
 
 template<typename T>
-class matrix
+matrix<T>::matrix(int rows, int cols) : array(rows)
 {
-private:
-    //定义容器
-    vector< vector<T> > array;
-public:
-    //构造函数
-    matrix(int rows, int cols) : array(rows)
+    for(auto & thisRow : array)
     {
-        for(auto & thisRow : array)
-        {
-            thisRow.resize(cols);
-        }
+        thisRow.resize(cols);
     }
+}
 
-    //拷贝构造函数
-    matrix(vector< vector<T> > v) : array{v} {}
+template<typename T>
+matrix<T>::matrix(vector< vector<T> > v) : array{v} {}
 
-    //移动构造函数（剪切）
-    matrix(vector< vector<T> > &&v) : array{move(v)} {}
+template<typename T>
+matrix<T>::matrix(vector< vector<T> > &&v) : array{move(v)} {}
 
-    //注意：冒号语法正在构造函数中使用
+template<typename T>
+const vector<T>& matrix<T>::operator[](int row) const
+{
+    return array[row];
+}
 
-    //只读矩阵：第一个const表示返回值不被修改，第二个const表示对象属性不被修改
-    const vector<T>& operator[](int row) const
+template<typename T>
+vector<T>& matrix<T>::operator[](int row)
+{
+    return array[row];
+}
+
+template<typename T>
+int matrix<T>::numrows() const
+{
+    return array.size();
+}
+
+template<typename T>
+int matrix<T>::numcols() const
+{
+    if (numrows() == 0)
+        return 0;
+    else
+        return array[0].size();
+}
+
+template<typename T>
+void matrix<T>::resize(int rows, int cols)
+{
+    array.resize(rows);
+    for(auto & thisRow : array)
     {
-        return array[row];
+        thisRow.resize(cols);
     }
-
-    //读写矩阵
-    vector<T>& operator[](int row)
-    {
-        return array[row];
-    }
-
-    //返回行数
-    int numrows() const
-    {
-        return array.size();
-    }
-
-    //返回列数
-    int numcols() const
-    {
-        if (numrows() == 0)
-            return 0;
-        else
-            return array[0].size();
-    }
-
-    //重新指定矩阵规格
-    void resize(int rows, int cols)
-    {
-        array.resize(rows);
-        for(auto & thisRow : array)
-        {
-            thisRow.resize(cols);
-        }
-    }
-};
+}
