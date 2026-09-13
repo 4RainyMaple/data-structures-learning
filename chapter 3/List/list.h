@@ -4,6 +4,7 @@
 #include "node.h"
 #include "const_iterator.h"
 #include "iterator.h"
+#include <stdexcept>
 #include <utility>
 
 template<typename Object>
@@ -15,8 +16,6 @@ public:
 
 private:
     using Node = ::Node<Object>;
-    using Exception = ::IteratorOutOfBoundsException;
-
     int theSize;
     Node * head;
     Node * tail;

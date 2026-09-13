@@ -20,7 +20,7 @@ void List<Object>::assertIteratorBelongsToThis ( const const_iterator & itr ) co
 {
     itr.assertIsValid();
     if ( itr.theList != this )
-        throw Exception{};
+        throw std::out_of_range ( "Iterator does not belong to this List" );
 }
 
 template<typename Object>
@@ -171,7 +171,7 @@ typename List<Object>::iterator List<Object>::erase ( iterator pos )
     assertIteratorBelongsToThis ( pos );
     //end()指向尾哨兵，不能删除
     if ( pos.current == tail )
-        throw Exception{};
+        throw std::out_of_range ( "erase(): cannot erase end iterator" );
     Node * p = pos.current;
     iterator retItr ( *this, p->next, head, tail );
     p->prev->next = p->next;
@@ -196,7 +196,7 @@ typename List<Object>::iterator List<Object>::insert ( iterator pos, const Objec
 {
     pos.assertIsValid();
     if ( pos.theList != this )
-        throw Exception{};
+        throw std::out_of_range ( "Iterator does not belong to this List" );
     Node * p = pos.current;
     //先创建新节点，让它连接到原来的前一个节点和当前位置
     Node * newNode = new Node ( ele, p->prev, p );
@@ -215,7 +215,7 @@ typename List<Object>::iterator List<Object>::insert ( iterator pos, Object && e
 {
     pos.assertIsValid();
     if ( pos.theList != this )
-        throw Exception{};
+        throw std::out_of_range ( "Iterator does not belong to this List" );
     Node * p = pos.current;
     Node * newNode = new Node ( std::move(ele), p->prev, p );
     p->prev->next = newNode;

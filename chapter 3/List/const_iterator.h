@@ -7,13 +7,6 @@
 template<typename Object>
 class List;
 
-//迭代器保护机制使用的异常
-class IteratorOutOfBoundsException : public std::out_of_range
-{
-public:
-    IteratorOutOfBoundsException () : std::out_of_range ( "Iterator out of bounds" ) {}
-};
-
 //只读迭代器：可移动迭代位置，但不能通过它修改元素
 template<typename Object>
 class const_iterator
