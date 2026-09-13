@@ -3,57 +3,53 @@
 
 #include "iterator.h"
 
-namespace ListDetail
-{
     template<typename Object>
-    Iterator<Object>::Iterator () : ConstIterator<Object> {} {}
+    ListIterator<Object>::ListIterator () : const_iterator<Object> {} {}
 
     template<typename Object>
-    Iterator<Object>::Iterator ( const ::List<Object> & lst, Node<Object> * p,
-                                 Node<Object> * first, Node<Object> * last ) :
-    ConstIterator<Object> {lst, p, first, last} {}
+    ListIterator<Object>::ListIterator ( const ::List<Object> & lst, Node<Object> * p,
+                                         Node<Object> * first, Node<Object> * last ) :
+    const_iterator<Object> {lst, p, first, last} {}  //初始化列表调用基类构造函数更方便
 
     template<typename Object>
-    Object & Iterator<Object>::operator * ()
+    Object & ListIterator<Object>::operator * ()
     {
-        return ConstIterator<Object>::retrieve();
+        return const_iterator<Object>::retrieve();
     }
 
     template<typename Object>
-    const Object & Iterator<Object>::operator * () const
+    const Object & ListIterator<Object>::operator * () const
     {
-        return ConstIterator<Object>::operator * ();
+        return const_iterator<Object>::operator * ();
     }
 
     template<typename Object>
-    Iterator<Object> & Iterator<Object>::operator ++ ()
+    ListIterator<Object> & ListIterator<Object>::operator ++ ()
     {
-        ConstIterator<Object>::operator ++ ();
+        const_iterator<Object>::operator ++ ();
         return *this;
     }
 
     template<typename Object>
-    Iterator<Object> Iterator<Object>::operator ++ ( int )
+    ListIterator<Object> ListIterator<Object>::operator ++ ( int )
     {
-        Iterator old = *this;
+        ListIterator old = *this;
         ++(*this);
         return old;
     }
 
     template<typename Object>
-    Iterator<Object> & Iterator<Object>::operator -- ()
+    ListIterator<Object> & ListIterator<Object>::operator -- ()
     {
-        ConstIterator<Object>::operator -- ();
+        const_iterator<Object>::operator -- ();
         return *this;
     }
 
     template<typename Object>
-    Iterator<Object> Iterator<Object>::operator -- ( int )
+    ListIterator<Object> ListIterator<Object>::operator -- ( int )
     {
-        Iterator old = *this;
+        ListIterator old = *this;
         --(*this);
         return old;
     }
-}
-
 #endif

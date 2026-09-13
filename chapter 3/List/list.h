@@ -9,20 +9,22 @@
 template<typename Object>
 class List
 {
+public:
+    using const_iterator = ::const_iterator<Object>;
+    using iterator = ::ListIterator<Object>;
+
 private:
-    using Node = ListDetail::Node<Object>;
+    using Node = ::Node<Object>;
+    using Exception = ::IteratorOutOfBoundsException;
 
     int theSize;
     Node * head;
     Node * tail;
 
     void initial();
-    void assertIteratorBelongsToThis ( const ListDetail::ConstIterator<Object> & itr ) const;
+    void assertIteratorBelongsToThis ( const const_iterator & itr ) const;
 
 public:
-    using const_iterator = ListDetail::ConstIterator<Object>;
-    using iterator = ListDetail::Iterator<Object>;
-
     //迭代器访问接口
     iterator begin();
     const_iterator begin() const;

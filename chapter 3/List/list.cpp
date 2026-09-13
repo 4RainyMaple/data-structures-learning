@@ -7,7 +7,7 @@ template<typename Object>
 void List<Object>::initial()
 {
     theSize = 0;
-    //调用Node的默认构造函数创建节点
+    //与迭代器相比，链表的首尾节点需要长期存在，故在堆区开辟内存
     head = new Node;
     tail = new Node;
     //连接首尾节点
@@ -20,7 +20,7 @@ void List<Object>::assertIteratorBelongsToThis ( const const_iterator & itr ) co
 {
     itr.assertIsValid();
     if ( itr.theList != this )
-        throw ListDetail::IteratorOutOfBoundsException{};
+        throw Exception{};
 }
 
 template<typename Object>
@@ -171,7 +171,7 @@ typename List<Object>::iterator List<Object>::erase ( iterator pos )
     assertIteratorBelongsToThis ( pos );
     //end()指向尾哨兵，不能删除
     if ( pos.current == tail )
-        throw ListDetail::IteratorOutOfBoundsException{};
+        throw Exception{};
     Node * p = pos.current;
     iterator retItr ( *this, p->next, head, tail );
     p->prev->next = p->next;
@@ -196,7 +196,7 @@ typename List<Object>::iterator List<Object>::insert ( iterator pos, const Objec
 {
     pos.assertIsValid();
     if ( pos.theList != this )
-        throw ListDetail::IteratorOutOfBoundsException{};
+        throw Exception{};
     Node * p = pos.current;
     //先创建新节点，让它连接到原来的前一个节点和当前位置
     Node * newNode = new Node ( ele, p->prev, p );
@@ -215,7 +215,7 @@ typename List<Object>::iterator List<Object>::insert ( iterator pos, Object && e
 {
     pos.assertIsValid();
     if ( pos.theList != this )
-        throw ListDetail::IteratorOutOfBoundsException{};
+        throw Exception{};
     Node * p = pos.current;
     Node * newNode = new Node ( std::move(ele), p->prev, p );
     p->prev->next = newNode;
