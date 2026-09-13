@@ -42,7 +42,10 @@ Vector<Object> & Vector<Object>::operator = ( const Vector & rhs )
     if ( this != &rhs )      //自赋值检查
     {
         Vector temp = rhs;
-        swap( *this, temp );    //不可以返回temp因为这是局部变量
+        swap( theSize, temp.theSize );
+        swap( theCapacity, temp.theCapacity );
+        swap( objects, temp.objects );
+        //temp析构时会释放原来*this所持有的数组
     }
     //=运算返回值是左值，*this也是左值，返回引用是为了避免深拷贝浪费资源
     return *this;
