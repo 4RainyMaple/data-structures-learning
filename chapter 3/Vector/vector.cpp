@@ -96,12 +96,16 @@ void Vector<Object>::resize(int newSize)
 template<typename Object>
 Object & Vector<Object>::operator [] (int idx)
 {
+    if ( idx > theSize - 1 || idx < 0 )
+        throw std::out_of_range("operator[]:out of range");
     return objects[idx];
 }
 
 template<typename Object>
 const Object & Vector<Object>::operator [] (int idx) const
 {
+    if ( idx > theSize - 1 || idx < 0 )
+        throw std::out_of_range("operator[]:out of range");
     return objects[idx];
 }
 
