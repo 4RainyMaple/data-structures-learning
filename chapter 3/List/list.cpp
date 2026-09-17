@@ -3,6 +3,7 @@
 
 #include "list.h"
 
+// ==================== ⚙️ 内部辅助函数 ====================
 template<typename Object>
 void List<Object>::initial()
 {
@@ -23,30 +24,7 @@ void List<Object>::assertIteratorBelongsToThis ( const const_iterator & itr ) co
         throw std::out_of_range ( "Iterator does not belong to this List" );
 }
 
-template<typename Object>
-typename List<Object>::iterator List<Object>::begin()
-{
-    return iterator ( *this, head->next, head, tail );
-}
-
-template<typename Object>
-typename List<Object>::const_iterator List<Object>::begin() const
-{
-    return const_iterator ( *this, head->next, head, tail );
-}
-
-template<typename Object>
-typename List<Object>::iterator List<Object>::end()
-{
-    return iterator ( *this, tail, head, tail );
-}
-
-template<typename Object>
-typename List<Object>::const_iterator List<Object>::end() const
-{
-    return const_iterator ( *this, tail, head, tail );
-}
-
+// ==================== 🔵 构造与析构 ====================
 template<typename Object>
 List<Object>::List()
 {
@@ -79,27 +57,7 @@ List<Object>::~List()
     delete tail;
 }
 
-template<typename Object>
-bool List<Object>::operator == ( const List & rhs ) const
-{
-    auto itr1 = begin();
-    auto itr2 = rhs.begin();
-    while ( itr1 != end() && itr2 != rhs.end() )
-    {
-        if ( *itr1 != *itr2 )
-            return false;
-        ++itr1;
-        ++itr2;
-    }
-    return itr1 == end() && itr2 == rhs.end();
-}
-
-template<typename Object>
-bool List<Object>::operator != ( const List & rhs ) const
-{
-    return !( *this == rhs );
-}
-
+// ==================== 🟢 赋值操作 ====================
 template<typename Object>
 List<Object> & List<Object>::operator = ( const List & rhs )
 {
@@ -120,16 +78,17 @@ List<Object> & List<Object>::operator = ( List && rhs )
     return *this;
 }
 
-template<typename Object>
-int List<Object>::size() const
-{
-    return theSize;
-}
-
+// ==================== 🟠 容量和清空 ====================
 template<typename Object>
 bool List<Object>::empty() const
 {
     return size() == 0;
+}
+
+template<typename Object>
+int List<Object>::size() const
+{
+    return theSize;
 }
 
 template<typename Object>
@@ -141,6 +100,7 @@ void List<Object>::clear()
     theSize = 0;
 }
 
+// ==================== 🟣 元素访问 ====================
 template<typename Object>
 Object & List<Object>::front()
 {
@@ -165,30 +125,66 @@ const Object & List<Object>::back() const
     return *(--end());
 }
 
+// ==================== 🟡 迭代器访问 ====================
 template<typename Object>
-typename List<Object>::iterator List<Object>::erase ( iterator pos )
+typename List<Object>::iterator List<Object>::begin()
 {
-    assertIteratorBelongsToThis ( pos );
-    //end()指向尾哨兵，不能删除
-    if ( pos.current == tail )
-        throw std::out_of_range ( "erase(): cannot erase end iterator" );
-    Node * p = pos.current;
-    iterator retItr ( *this, p->next, head, tail );
-    p->prev->next = p->next;
-    p->next->prev = p->prev;
-    delete p;
-    --theSize;
-    return retItr;
+    return iterator ( *this, head->next, head, tail );
 }
 
 template<typename Object>
-typename List<Object>::iterator List<Object>::erase ( iterator from, iterator to )
+typename List<Object>::const_iterator List<Object>::begin() const
 {
-    assertIteratorBelongsToThis ( from );
-    assertIteratorBelongsToThis ( to );
-    for ( iterator itr = from; itr != to; )
-        itr = erase ( itr );   //erase本来就有让迭代器前进的效果
-    return to;  //右边是开区间，故直接返回to即可
+    return const_iterator ( *this, head->next, head, tail );
+}
+
+template<typename Object>
+typename List<Object>::iterator List<Object>::end()
+{
+    return iterator ( *this, tail, head, tail );
+}
+
+template<typename Object>
+typename List<Object>::const_iterator List<Object>::end() const
+{
+    return const_iterator ( *this, tail, head, tail );
+}
+
+// ==================== 🔴 增删元素 ====================
+template<typename Object>
+void List<Object>::push_front ( const Object & rhs )
+{
+    insert ( begin(), rhs );
+}
+
+template<typename Object>
+void List<Object>::push_front ( Object && rhs )
+{
+    insert ( begin(), std::move(rhs) );
+}
+
+template<typename Object>
+void List<Object>::push_back ( const Object & rhs )
+{
+    insert ( end(), rhs );
+}
+
+template<typename Object>
+void List<Object>::push_back ( Object && rhs )
+{
+    insert ( end(), std::move(rhs) );
+}
+
+template<typename Object>
+void List<Object>::pop_front()
+{
+    erase ( begin() );
+}
+
+template<typename Object>
+void List<Object>::pop_back()
+{
+    erase ( --end() );
 }
 
 template<typename Object>
@@ -225,39 +221,51 @@ typename List<Object>::iterator List<Object>::insert ( iterator pos, Object && e
 }
 
 template<typename Object>
-void List<Object>::push_front ( const Object & rhs )
+typename List<Object>::iterator List<Object>::erase ( iterator pos )
 {
-    insert ( begin(), rhs );
+    assertIteratorBelongsToThis ( pos );
+    //end()指向尾哨兵，不能删除
+    if ( pos.current == tail )
+        throw std::out_of_range ( "erase(): cannot erase end iterator" );
+    Node * p = pos.current;
+    iterator retItr ( *this, p->next, head, tail );
+    p->prev->next = p->next;
+    p->next->prev = p->prev;
+    delete p;
+    --theSize;
+    return retItr;
 }
 
 template<typename Object>
-void List<Object>::push_front ( Object && rhs )
+typename List<Object>::iterator List<Object>::erase ( iterator from, iterator to )
 {
-    insert ( begin(), std::move(rhs) );
+    assertIteratorBelongsToThis ( from );
+    assertIteratorBelongsToThis ( to );
+    for ( iterator itr = from; itr != to; )
+        itr = erase ( itr );   //erase本来就有让迭代器前进的效果
+    return to;  //右边是开区间，故直接返回to即可
+}
+
+// ==================== 🔷 比较操作 ====================
+template<typename Object>
+bool List<Object>::operator == ( const List & rhs ) const
+{
+    auto itr1 = begin();
+    auto itr2 = rhs.begin();
+    while ( itr1 != end() && itr2 != rhs.end() )
+    {
+        if ( *itr1 != *itr2 )
+            return false;
+        ++itr1;
+        ++itr2;
+    }
+    return itr1 == end() && itr2 == rhs.end();
 }
 
 template<typename Object>
-void List<Object>::push_back ( const Object & rhs )
+bool List<Object>::operator != ( const List & rhs ) const
 {
-    insert ( end(), rhs );
-}
-
-template<typename Object>
-void List<Object>::push_back ( Object && rhs )
-{
-    insert ( end(), std::move(rhs) );
-}
-
-template<typename Object>
-void List<Object>::pop_front()
-{
-    erase ( begin() );
-}
-
-template<typename Object>
-void List<Object>::pop_back()
-{
-    erase ( --end() );
+    return !( *this == rhs );
 }
 
 #endif

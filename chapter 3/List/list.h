@@ -11,6 +11,7 @@ template<typename Object>
 class List
 {
 public:
+    // ==================== 🧩 迭代器类型 ====================
     using const_iterator = ::const_iterator<Object>;
     using iterator = ::ListIterator<Object>;
 
@@ -20,39 +21,39 @@ private:
     Node * head;
     Node * tail;
 
+    // ==================== ⚙️ 内部辅助函数 ====================
     void initial();
     void assertIteratorBelongsToThis ( const const_iterator & itr ) const;
 
 public:
-    //迭代器访问接口
-    iterator begin();
-    const_iterator begin() const;
-    iterator end();
-    const_iterator end() const;
-
-    //构造、复制、移动和析构
+    // ==================== 🔵 构造与析构 ====================
     List();
     List ( const List & rhs );
     List ( List && rhs );
     ~List();
+
+    // ==================== 🟢 赋值操作 ====================
     List & operator = ( const List & rhs );
     List & operator = ( List && rhs );
 
-    bool operator == ( const List & rhs ) const;
-    bool operator != ( const List & rhs ) const;
-
-    //容量和清空
-    int size() const;
+    // ==================== 🟠 容量和清空 ====================
     bool empty() const;
+    int size() const;
     void clear();
 
-    //访问首尾元素
+    // ==================== 🟣 元素访问 ====================
     Object & front();
     const Object & front() const;
     Object & back();
     const Object & back() const;
 
-    //增删元素
+    // ==================== 🟡 迭代器访问 ====================
+    iterator begin();
+    const_iterator begin() const;
+    iterator end();
+    const_iterator end() const;
+
+    // ==================== 🔴 增删元素 ====================
     void push_front ( const Object & rhs );
     void push_front ( Object && rhs );
     void push_back ( const Object & rhs );
@@ -63,6 +64,10 @@ public:
     iterator insert ( iterator pos, Object && ele );
     iterator erase ( iterator pos );
     iterator erase ( iterator from, iterator to );
+
+    // ==================== 🔷 比较操作 ====================
+    bool operator == ( const List & rhs ) const;
+    bool operator != ( const List & rhs ) const;
 };
 
 //类模板的实现需要对使用者可见
