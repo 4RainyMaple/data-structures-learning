@@ -5,6 +5,7 @@
 #include<utility>
 #include<stdexcept>
 
+// ==================== ⚙️ 内部辅助函数 ====================
 template<typename Object>
 void Queue<Object>::reserve ( int newCapacity )
 {
@@ -23,6 +24,7 @@ void Queue<Object>::reserve ( int newCapacity )
     //元素的位置没有改变，所以队头和队尾下标也不用改变
 }
 
+// ==================== 🔵 构造与析构 ====================
 template<typename Object>
 Queue<Object>::Queue() :
 objects {nullptr} , theSize {0} , theCapacity {0} ,
@@ -44,6 +46,7 @@ frontIndex {rhs.frontIndex} , backIndex {rhs.backIndex}
         objects[i] = rhs.objects[i];
     }
 }
+
 template<typename Object>
 Queue<Object>::Queue ( Queue && rhs ) :
 objects {rhs.objects} , theSize {rhs.theSize} , theCapacity {rhs.theCapacity} ,
@@ -62,6 +65,7 @@ Queue<Object>::~Queue()
     delete [] objects;
 }
 
+// ==================== 🟢 赋值操作 ====================
 template<typename Object>
 Queue<Object> & Queue<Object>::operator = ( const Queue & rhs )
 {
@@ -89,6 +93,7 @@ Queue<Object> & Queue<Object>::operator = ( Queue && rhs )
     return *this;
 }
 
+// ==================== 🟠 容量和清空 ====================
 template<typename Object>
 bool Queue<Object>::empty() const
 {
@@ -111,6 +116,24 @@ void Queue<Object>::clear()
     //此时队头和队尾下标相等，下次入队继续往后写
 }
 
+// ==================== 🟣 元素访问 ====================
+template<typename Object>
+Object & Queue<Object>::front()
+{
+    if ( size() == 0 )
+        throw std::out_of_range("front(): empty queue");
+    return objects[frontIndex];
+}
+
+template<typename Object>
+const Object & Queue<Object>::front() const
+{
+    if ( size() == 0 )
+        throw std::out_of_range("front(): empty queue");
+    return objects[frontIndex];
+}
+
+// ==================== 🔴 增删元素 ====================
 template<typename Object>
 void Queue<Object>::enqueue ( const Object & ele )
 {
@@ -155,22 +178,6 @@ void Queue<Object>::dequeue()
     --theSize;
     //不用删除数组中的对象，队头后移后，该位置就不再属于队列
     ++frontIndex;
-}
-
-template<typename Object>
-Object & Queue<Object>::front()
-{
-    if ( size() == 0 )
-        throw std::out_of_range("front(): empty queue");
-    return objects[frontIndex];
-}
-
-template<typename Object>
-const Object & Queue<Object>::front() const
-{
-    if ( size() == 0 )
-        throw std::out_of_range("front(): empty queue");
-    return objects[frontIndex];
 }
 
 #endif
