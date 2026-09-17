@@ -5,6 +5,7 @@
 #include <stdexcept>     //out_of_range
 #include <utility>      //move, swap
 
+// ==================== ⚙️ 内部辅助函数 ====================
 template<typename Object>
 void Stack<Object>::reserve ( int newCapacity )
 {
@@ -17,6 +18,7 @@ void Stack<Object>::reserve ( int newCapacity )
     theCapacity = newCapacity;
 }
 
+// ==================== 🔵 构造与析构 ====================
 template<typename Object>
 Stack<Object>::Stack() : objects {nullptr}, theSize {0}, theCapacity {0} {}
 
@@ -46,6 +48,7 @@ Stack<Object>::~Stack()
     delete [] objects;
 }
 
+// ==================== 🟢 赋值操作 ====================
 template<typename Object>
 Stack<Object> & Stack<Object>::operator = ( const Stack & rhs )
 {
@@ -68,6 +71,7 @@ Stack<Object> & Stack<Object>::operator = ( Stack && rhs )
     return *this;
 }
 
+// ==================== 🟠 容量查询 ====================
 template<typename Object>
 bool Stack<Object>::empty() const
 {
@@ -80,14 +84,24 @@ int Stack<Object>::size() const
     return theSize;
 }
 
+// ==================== 🟣 元素访问 ====================
 template<typename Object>
-void Stack<Object>::pop()
+Object & Stack<Object>::top()
 {
     if ( empty() )
-        return;
-    --theSize;
+        throw std::out_of_range ( "top(): empty stack" );
+    return objects[theSize - 1];
 }
 
+template<typename Object>
+const Object & Stack<Object>::top() const
+{
+    if ( empty() )
+        throw std::out_of_range ( "top(): empty stack" );
+    return objects[theSize - 1];
+}
+
+// ==================== 🔴 增删元素 ====================
 template<typename Object>
 void Stack<Object>::push ( const Object & ele )
 {
@@ -105,19 +119,11 @@ void Stack<Object>::push ( Object && ele )
 }
 
 template<typename Object>
-Object & Stack<Object>::top()
+void Stack<Object>::pop()
 {
     if ( empty() )
-        throw std::out_of_range ( "top(): empty stack" );
-    return objects[theSize - 1];
-}
-
-template<typename Object>
-const Object & Stack<Object>::top() const
-{
-    if ( empty() )
-        throw std::out_of_range ( "top(): empty stack" );
-    return objects[theSize - 1];
+        return;
+    --theSize;
 }
 
 #endif
