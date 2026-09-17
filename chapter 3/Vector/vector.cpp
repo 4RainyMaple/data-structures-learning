@@ -3,6 +3,7 @@
 
 #include "vector.h"     //单独编译本文件时也能拿到类的声明
 
+// ==================== 🔵 构造与析构 ====================
 template<typename Object>
 Vector<Object>::Vector ( int initSize ) :
     theSize { initSize },
@@ -36,6 +37,13 @@ Vector<Object>::Vector ( Vector && rhs ) :
 }
 
 template<typename Object>
+Vector<Object>::~Vector()
+{
+    delete [] objects;    //数组要用 delete []
+}
+
+// ==================== 🟢 赋值操作 ====================
+template<typename Object>
 Vector<Object> & Vector<Object>::operator = ( const Vector & rhs )
 {
     //不可修改传入参数，故定义新的变量
@@ -60,10 +68,23 @@ Vector<Object> & Vector<Object>::operator = ( Vector && rhs )
     return *this;
 }
 
+// ==================== 🟠 容量管理 ====================
 template<typename Object>
-Vector<Object>::~Vector()
+bool Vector<Object>::empty() const
 {
-    delete [] objects;    //数组要用 delete []
+    return size() == 0;
+}
+
+template<typename Object>
+int Vector<Object>::size() const
+{
+    return theSize;
+}
+
+template<typename Object>
+int Vector<Object>::capacity() const
+{
+    return theCapacity;
 }
 
 template<typename Object>
@@ -93,6 +114,7 @@ void Vector<Object>::resize(int newSize)
     theSize = newSize;
 }
 
+// ==================== 🟣 元素访问 ====================
 template<typename Object>
 Object & Vector<Object>::operator [] (int idx)
 {
@@ -110,23 +132,40 @@ const Object & Vector<Object>::operator [] (int idx) const
 }
 
 template<typename Object>
-bool Vector<Object>::empty() const
+const Object & Vector<Object>::back () const
 {
-    return size() == 0;
+    if ( empty() )      //引用必须绑定到真实对象，没法"什么都不返回"，只能报错
+        throw out_of_range( "back(): empty vector" );
+    return objects[theSize - 1];
+}
+
+// ==================== 🟡 迭代器访问 ====================
+template<typename Object>
+typename Vector<Object>::iterator Vector<Object>::begin()
+{
+    return & objects[0];
 }
 
 template<typename Object>
-int Vector<Object>::size() const
+typename Vector<Object>::const_iterator Vector<Object>::begin() const
 {
-    return theSize;
+    return & objects[0];
 }
 
 template<typename Object>
-int Vector<Object>::capacity() const
+typename Vector<Object>::iterator Vector<Object>::end()
 {
-    return theCapacity;
+    return & objects[ theSize ];
+    //本质上是 &*( objects + theSize ) = objects + theSize，故不是UB
 }
 
+template<typename Object>
+typename Vector<Object>::const_iterator Vector<Object>::end() const
+{
+    return & objects[ theSize ];
+}
+
+// ==================== 🔴 增删元素 ====================
 template<typename Object>
 void Vector<Object>::push_back(const Object & ele)
 {
@@ -153,38 +192,67 @@ void Vector<Object>::pop_back()
 }
 
 template<typename Object>
-const Object & Vector<Object>::back () const
+typename Vector<Object>::iterator Vector<Object>::insert ( iterator pos, const Object & ele )
 {
-    if ( empty() )      //引用必须绑定到真实对象，没法"什么都不返回"，只能报错
-        throw out_of_range( "back(): empty vector" );
-    return objects[theSize - 1];
+    //扩容会导致原数组（指针）丢失，进而pos也失效
+    int index = pos - begin();  //这里的迭代器就是指针，指针做差得到相隔元素个数
+    
+    if ( theSize == theCapacity )
+        reserve( 2*theCapacity + 1 );
+
+    for ( int i = theSize; i > index; --i )
+        objects[i] = std::move( objects[i-1] );    
+    objects[index] = ele;
+
+    ++theSize;      //必须先赋值再增大theSize，因为循环里涉及
+    return begin() + index;
 }
 
 template<typename Object>
-typename Vector<Object>::iterator Vector<Object>::begin()
+typename Vector<Object>::iterator Vector<Object>::insert ( iterator pos, Object && ele )
 {
-    return & objects[0];
+    int index = pos - begin();
+
+    if ( theSize == theCapacity )
+        reserve( 2*theCapacity + 1 );
+
+    for ( int i = theSize; i > index; --i )
+        objects[i] = std::move( objects[i-1] );
+    objects[index] = std::move(ele);
+
+    ++theSize;
+    return begin() + index;
+    
 }
 
 template<typename Object>
-typename Vector<Object>::const_iterator Vector<Object>::begin() const
+typename Vector<Object>::iterator Vector<Object>::erase ( iterator pos )
 {
-    return & objects[0];
+    //调用该函数后pos地址不变而指向元素改变，认为失效
+    int index = pos - begin();
+    for ( int i = index; i < theSize - 1; ++i )
+        objects[i] = std::move( objects[i+1] );
+
+    --theSize;
+    return begin() + index;
 }
 
 template<typename Object>
-typename Vector<Object>::iterator Vector<Object>::end()
+typename Vector<Object>::iterator Vector<Object>::erase ( iterator from, iterator to )
 {
-    return & objects[ theSize ];
-    //本质上是 &*( objects + theSize ) = objects + theSize，故不是UB
+    //先保存[from, to)中的元素个数，空区间的删除数量为0
+    int count = to - from;
+    for ( int i = 1; i <= count; ++i )
+    {
+        //删除后，后面的元素会左移到当前位置，返回的迭代器仍指向这个位置
+        //因此不用再++from，也不能用原来的to作为循环终点
+        from = erase(from);
+    }
+    //返回删除区间后第一个元素的新位置；如果删除到末尾，则这里就是新的end()
+    return from;
 }
 
-template<typename Object>
-typename Vector<Object>::const_iterator Vector<Object>::end() const
-{
-    return & objects[ theSize ];
-}
-
+// ==================== 🔷 比较操作 ====================
 template<typename Object>
 bool Vector<Object>:: operator == (const Vector & rhs) const
 {

@@ -15,6 +15,11 @@ private:
     static const int SPARE_CAPACITY = 16;   //经验数据
 
 public:
+    // ==================== 🧩 迭代器类型 ====================
+    typedef Object* iterator;
+    typedef const Object* const_iterator;   //提供只读版本
+
+    // ==================== 🔵 构造与析构 ====================
     //默认+有参构造函数，explicit用来防止int隐式转换
     explicit Vector ( int initSize = 0 );
 
@@ -24,12 +29,18 @@ public:
     //移动构造函数（剪切）：先给自己初始化，再把参数清空
     Vector ( Vector && rhs );
 
+    //析构函数
+    ~Vector();
+
+    // ==================== 🟢 赋值操作 ====================
     //重载=运算符
     Vector & operator = ( const Vector & rhs );
     Vector & operator = ( Vector && rhs );
 
-    //析构函数
-    ~Vector();
+    // ==================== 🟠 容量管理 ====================
+    bool empty() const;
+    int size() const;
+    int capacity() const;
 
     //改变容量
     void reserve(int newCapacity);
@@ -37,18 +48,24 @@ public:
     //改变大小
     void resize(int newSize);
 
+    // ==================== 🟣 元素访问 ====================
     //读写操作
     Object & operator [] (int idx);
 
     //只读操作
     const Object & operator [] (int idx) const;
 
-    bool empty() const;
+    //读取最后一个元素
+    const Object & back () const;
 
-    int size() const;
+    // ==================== 🟡 迭代器访问 ====================
+    iterator begin();
+    const_iterator begin() const;
 
-    int capacity() const;
+    iterator end();
+    const_iterator end() const;
 
+    // ==================== 🔴 增删元素 ====================
     void push_back(const Object & ele);
 
     //&&表示右值引用，右值是即将被销毁的值，可以直接拿走其资源，但右值引用的变量本身为左值
@@ -56,17 +73,17 @@ public:
 
     void pop_back();
 
-    const Object & back () const;
+    //在pos前插入元素，返回指向新插入元素的迭代器
+    iterator insert ( iterator pos, const Object & ele );
+    iterator insert ( iterator pos, Object && ele );
 
-    typedef Object* iterator;
-    typedef const Object* const_iterator;   //提供只读版本
+    //删除pos处的元素，返回指向其后一个元素的迭代器
+    iterator erase ( iterator pos );
 
-    iterator begin();
-    const_iterator begin() const;
+    //删除[from, to)范围内的元素，返回指向删除区间后一个元素的迭代器
+    iterator erase ( iterator from, iterator to );
 
-    iterator end();
-    const_iterator end() const;
-
+    // ==================== 🔷 比较操作 ====================
     bool operator == (const Vector & rhs) const;
     bool operator != (const Vector & rhs) const;
 };
