@@ -65,6 +65,12 @@ public:
     iterator erase ( iterator pos );
     iterator erase ( iterator from, iterator to );
 
+    //将lst中的所有元素按原顺序转移到本表的position之前，转移后lst为空
+    //position属于本表，可以是end()；lst与本表必须是不同的表
+    //要求只调整节点之间的连接，以O(1)时间完成
+    //当前迭代器保存所属表的信息，转移后请从本表重新获取指向转移元素的迭代器
+    void splice ( iterator position, List & lst );
+
     // ==================== 🔷 比较操作 ====================
     bool operator == ( const List & rhs ) const;
     bool operator != ( const List & rhs ) const;

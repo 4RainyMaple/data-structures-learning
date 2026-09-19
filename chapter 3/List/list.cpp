@@ -246,6 +246,37 @@ typename List<Object>::iterator List<Object>::erase ( iterator from, iterator to
     return to;  //右边是开区间，故直接返回to即可
 }
 
+template<typename Object>
+void List<Object>::splice ( iterator position, List & lst )
+{
+    //检查position是否有效，并且属于本表
+    assertIteratorBelongsToThis ( position );
+    //没有元素需要转移，或者两个表是同一个表时，直接返回
+    if ( lst.theSize == 0 || this == &lst )
+        return;
+
+    //先保存插入位置及其前一个节点，current是节点指针
+    Node * p = position.current;
+    Node * before = p->prev;    //必须要现在保存这个节点，操作后就拿不到了
+    //只转移实际存储元素的节点，不转移lst的首尾哨兵
+    Node * first = lst.head->next;
+    Node * last = lst.tail->prev;
+
+    //把这一段节点的开头接到before后面，两个方向都要连接
+    before->next = first;
+    first->prev = before;
+    //把这一段节点的末尾接到p前面，中间各节点的连接不变
+    last->next = p;
+    p->prev = last;
+
+    //保留lst原来的首尾哨兵，让它们互相连接，恢复为空表
+    lst.head->next = lst.tail;
+    lst.tail->prev = lst.head;
+    //先增加本表的元素个数，再将lst的元素个数清零
+    theSize += lst.theSize;
+    lst.theSize = 0;
+}
+
 // ==================== 🔷 比较操作 ====================
 template<typename Object>
 bool List<Object>::operator == ( const List & rhs ) const
