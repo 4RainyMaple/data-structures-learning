@@ -74,6 +74,25 @@ const_iterator<Object> const_iterator<Object>::operator -- ( int )
 }
 
 template<typename Object>
+const_iterator<Object> const_iterator<Object>::operator + ( int k ) const
+{
+    //注意：后面有const，不可以修改迭代器指向关系，先拷贝副本
+    const_iterator temp = *this;
+    for ( int i = 0; i < k; ++i )
+        ++temp;
+    return temp;
+}
+
+template<typename Object>
+const_iterator<Object> const_iterator<Object>::operator - ( int k ) const
+{
+    const_iterator temp = *this;
+    for ( int i = 0; i < k; ++i )
+        --temp;
+    return temp;
+}
+
+template<typename Object>
 bool const_iterator<Object>::operator == ( const const_iterator & rhs ) const
 {
     return current == rhs.current;

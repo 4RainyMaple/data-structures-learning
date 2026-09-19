@@ -41,6 +41,11 @@ public:
     const_iterator & operator -- ();
     const_iterator operator -- ( int );
 
+    //返回沿next方向移动k个位置后的迭代器，不改变当前迭代器（k为非负数）
+    const_iterator operator + ( int k ) const;
+    //返回沿prev方向移动k个位置后的迭代器，不改变当前迭代器（k为非负数）
+    const_iterator operator - ( int k ) const;
+
     bool operator == ( const const_iterator & rhs ) const;
     bool operator != ( const const_iterator & rhs ) const;
 };
