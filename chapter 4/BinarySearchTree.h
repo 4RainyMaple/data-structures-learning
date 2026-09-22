@@ -1,11 +1,10 @@
-#ifndef BINARY_SEARCH_TREE_H
+﻿#ifndef BINARY_SEARCH_TREE_H
 #define BINARY_SEARCH_TREE_H
 
 #include <iostream>
 #include <utility>
+#include "BinaryNode.h"
 
-// 教材印刷页码 108–109，图 4.16。
-// Comparable 需要支持 < 比较；本练习不保存重复项。
 template <typename Comparable>
 class BinarySearchTree
 {
@@ -35,39 +34,28 @@ public:
     void remove(const Comparable & x);
 
     // ==================== 📄 遍历输出 ====================
-    void printTree(std::ostream & out = std::cout) const;
+    void printTree() const;
 
 private:
-    // ==================== 🌳 节点结构与根指针 ====================
-    // 按教材使用类内部的节点类型，不依赖已有的 BinaryNode.h。
-    struct BinaryNode
-    {
-        Comparable element;
-        BinaryNode * left;
-        BinaryNode * right;
+    // ==================== 🌳 根指针 ====================
 
-        // 节点构造：拷贝元素 / 移动元素。
-        BinaryNode(const Comparable & theElement, BinaryNode * lt, BinaryNode * rt);
-        BinaryNode(Comparable && theElement, BinaryNode * lt, BinaryNode * rt);
-    };
-
-    BinaryNode * root;
+    BinaryNode<Comparable> * root;
 
     // 以下为内部辅助函数：处理以 t 为根的子树。
     // ==================== ⚙️ 内部辅助：查询 ====================
-    BinaryNode * findMin(BinaryNode * t) const;
-    BinaryNode * findMax(BinaryNode * t) const;
-    bool contains(const Comparable & x, BinaryNode * t) const;
+    BinaryNode<Comparable> * findMin(BinaryNode<Comparable> * t) const;
+    BinaryNode<Comparable> * findMax(BinaryNode<Comparable> * t) const;
+    bool contains(const Comparable & x, BinaryNode<Comparable> * t) const;
 
     // ==================== ⚙️ 内部辅助：增删 ====================
-    void insert(const Comparable & x, BinaryNode * & t);
-    void insert(Comparable && x, BinaryNode * & t);
-    void remove(const Comparable & x, BinaryNode * & t);
+    void insert(const Comparable & x, BinaryNode<Comparable> * & t);
+    void insert(Comparable && x, BinaryNode<Comparable> * & t);
+    void remove(const Comparable & x, BinaryNode<Comparable> * & t);
 
     // ==================== ⚙️ 内部辅助：清空、输出与复制 ====================
-    void makeEmpty(BinaryNode * & t);
-    void printTree(BinaryNode * t, std::ostream & out) const;
-    BinaryNode * clone(BinaryNode * t) const;
+    void makeEmpty(BinaryNode<Comparable> * & t);
+    void printTree(BinaryNode<Comparable> * t) const;
+    BinaryNode<Comparable> * clone(BinaryNode<Comparable> * t) const;
 };
 
 // 类模板的函数定义需要对使用它的文件可见。
