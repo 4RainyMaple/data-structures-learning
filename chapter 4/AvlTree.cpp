@@ -1,4 +1,4 @@
-﻿#ifndef AVL_TREE_CPP_INCLUDED
+#ifndef AVL_TREE_CPP_INCLUDED
 #define AVL_TREE_CPP_INCLUDED
 
 #include "AvlTree.h"
@@ -103,14 +103,12 @@ template <typename Comparable>
 void AvlTree<Comparable>::insert(const Comparable & x)
 {
     insert( x, root );
-    balance();
 }
 
 template <typename Comparable>
 void AvlTree<Comparable>::insert(Comparable && x)
 {
     insert( std::move(x), root );
-    balance();
 }
 
 template <typename Comparable>
@@ -255,32 +253,31 @@ void AvlTree<Comparable>::insert(const Comparable & x, AvlNode * & t)
 {
     //节点不存在就先创建一个
     if ( t == nullptr )
-    {
         t = new AvlNode { x, nullptr, nullptr };
-        return;
-    }
-    if ( x > t->element )
+    else if ( x > t->element )
         insert( x, t->right );
     else if ( x < t->element )
         insert( x, t->left );
     else 
-        return;    
+        return;  
+        
+    balance(t); //进入递归时子树可能会更新，所以每层递归都要平衡
 }
 
 template <typename Comparable>
 void AvlTree<Comparable>::insert(Comparable && x, AvlNode * & t)
 {
     if ( t == nullptr )
-    {
         t = new AvlNode { std::move(x), nullptr, nullptr };
-        return;
-    }
-    if ( x > t->element )
+
+    else if ( x > t->element )
         insert( std::move(x), t->right );
     else if ( x < t->element )
         insert( std::move(x), t->left );
     else 
         return;
+
+    balance(t);
 }
 
 template <typename Comparable>
