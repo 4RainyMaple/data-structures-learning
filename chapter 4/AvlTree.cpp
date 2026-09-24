@@ -45,13 +45,19 @@ AvlTree<Comparable>::~AvlTree()
 template <typename Comparable>
 AvlTree<Comparable> & AvlTree<Comparable>::operator=(const AvlTree & rhs)
 {
-    // TODO：实现拷贝赋值。
+    if ( this != &rhs )
+    {
+        AvlTree temp (rhs);
+        std::swap( this->root, temp.root );
+    }
+    return *this;
 }
 
 template <typename Comparable>
 AvlTree<Comparable> & AvlTree<Comparable>::operator=(AvlTree && rhs)
 {
-    // TODO：实现移动赋值。
+    std::swap( this->root, rhs.root );
+    return *this;
 }
 
 // ==================== 🟠 判空与清空 ====================
@@ -114,7 +120,7 @@ void AvlTree<Comparable>::insert(Comparable && x)
 template <typename Comparable>
 void AvlTree<Comparable>::remove(const Comparable & x)
 {
-    // TODO：调用私有删除函数。
+    remove( x, root );
 }
 
 // ==================== 📄 遍历输出 ====================
@@ -283,7 +289,40 @@ void AvlTree<Comparable>::insert(Comparable && x, AvlNode * & t)
 template <typename Comparable>
 void AvlTree<Comparable>::remove(const Comparable & x, AvlNode * & t)
 {
-    // TODO：图 4.47：删除元素，递归返回时维护平衡。
+    if ( t == nullptr )
+        return;
+
+    if ( x > t->element )
+        remove( x, t->right );
+    else if ( x < t->element )
+        remove( x, t->left );
+    else 
+    {
+        if ( t->left == nullptr && t->right == nullptr )
+        {
+            delete t;
+            t = nullptr;
+        }
+        else if ( t->left != nullptr && t->right != nullptr )
+        {
+            Comparable temp = findMin(t->right)->element;
+            t->element = temp;
+            remove(temp, t->right); //删除右子树中的代替元素
+        }
+        else 
+        {
+            AvlNode * oldNode = t;
+
+            if ( t->left == nullptr )
+                t = t->right;
+            else 
+                t = t->left;
+
+            delete oldNode;
+            oldNode = nullptr;
+        }
+    }
+    balance(t);
 }
 
 // ==================== ⚙️ 内部辅助：清空、输出与复制 ====================
@@ -296,8 +335,9 @@ void AvlTree<Comparable>::makeEmpty(AvlNode * & t)
 
     makeEmpty(t->left);
     makeEmpty(t->right);
-    //先清空左右子树再清空自己
+    //先清空左右子树再清空自己  
     delete t;
+    t = nullptr;    //清除指针后记得置空
 }
 
 template <typename Comparable>
