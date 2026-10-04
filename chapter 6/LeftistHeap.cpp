@@ -14,7 +14,7 @@ template <typename Comparable>
 LeftistHeap<Comparable>::LeftistHeap(const LeftistHeap &rhs)
 {
     //中括号内要捕获自身才能调用自身实现递归
-    auto clone = [&clone](LeftistNode *t) -> LeftistNode *
+    std::function<LeftistNode *(LeftistNode *)> clone = [&clone](LeftistNode *t) -> LeftistNode *
     {
         if (t == nullptr)
             return nullptr;
