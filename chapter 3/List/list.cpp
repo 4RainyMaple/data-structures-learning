@@ -36,7 +36,7 @@ template<typename Object>
 List<Object>::List ( const List & rhs )
 {
     initial();
-    for ( auto x : rhs )
+    for ( const auto & x : rhs )
         push_back ( x );
 }
 
