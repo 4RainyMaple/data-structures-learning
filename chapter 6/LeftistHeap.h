@@ -38,6 +38,7 @@ private:
     LeftistNode *merge1(LeftistNode *h1, LeftistNode *h2);  //已保证 h1 的根不大于 h2
     void swapChildren(LeftistNode *t);
     void reclaimMemory(LeftistNode *t);
+    LeftistNode *clone(LeftistNode *t) const;
 };
 
 #include "LeftistHeap.cpp"

@@ -5,26 +5,13 @@
 #include <utility>
 #include <algorithm>
 #include <stdexcept>
-#include <functional>
 
 template <typename Comparable>
 LeftistHeap<Comparable>::LeftistHeap():root{nullptr}{}
 
 template <typename Comparable>
-LeftistHeap<Comparable>::LeftistHeap(const LeftistHeap &rhs)
-{
-    //中括号内要捕获自身才能调用自身实现递归
-    std::function<LeftistNode *(LeftistNode *)> clone = [&clone](LeftistNode *t) -> LeftistNode *
-    {
-        if (t == nullptr)
-            return nullptr;
-        LeftistNode *temp = new LeftistNode(t->element, nullptr, nullptr, t->npl);
-        temp->left = clone(t->left);
-        temp->right = clone(t->right);
-        return temp;
-    };
-    root = clone(rhs.root);
-}
+LeftistHeap<Comparable>::LeftistHeap(const LeftistHeap &rhs):
+root {clone(rhs.root)}  {}
 
 template <typename Comparable>
 LeftistHeap<Comparable>::LeftistHeap(LeftistHeap &&rhs):
@@ -46,7 +33,7 @@ LeftistHeap<Comparable> & LeftistHeap<Comparable>::operator=(const LeftistHeap &
     if ( this == &rhs )
         return *this;
 
-    auto temp = rhs;
+    LeftistHeap temp(rhs);
     std::swap( temp.root, this->root );
     return *this;
 }
@@ -172,6 +159,17 @@ void LeftistHeap<Comparable>::reclaimMemory(LeftistNode *t)
     reclaimMemory(t->left);
     reclaimMemory(t->right);
     delete t;
+}
+
+template <typename Comparable>
+typename LeftistHeap<Comparable>::LeftistNode *LeftistHeap<Comparable>::clone(LeftistNode *t) const
+{
+    if (t == nullptr)
+        return nullptr;
+    LeftistNode *temp = new LeftistNode(t->element, nullptr, nullptr, t->npl);
+    temp->left = clone(t->left);
+    temp->right = clone(t->right);
+    return temp;
 }
 
 #endif
