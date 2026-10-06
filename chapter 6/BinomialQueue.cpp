@@ -23,6 +23,7 @@ template <typename Comparable>
 BinomialQueue<Comparable>::BinomialQueue(const BinomialQueue &rhs):
 currentSize {rhs.currentSize} , theTrees (rhs.theTrees.size())
 {
+    //clone函数返回节点，只能写个循环拷贝
     for ( size_t i = 0; i < rhs.theTrees.size(); i++ )
         theTrees[i] = clone(rhs.theTrees[i]);
 }
@@ -31,6 +32,7 @@ template <typename Comparable>
 BinomialQueue<Comparable>::BinomialQueue(BinomialQueue &&rhs):
 currentSize {rhs.currentSize} , theTrees {std::move(rhs.theTrees)} 
 {
+    //记得清空传入的队列
     rhs.currentSize = 0;
 }
 
@@ -75,7 +77,7 @@ const Comparable & BinomialQueue<Comparable>::findMin() const
     if ( isEmpty() )
         throw std::underflow_error("empty heap");
 
-    int index = findMinIndex();
+    int index = findMinIndex();     //提高代码复用性
 
     return theTrees[index]->element;
 }
@@ -83,6 +85,7 @@ const Comparable & BinomialQueue<Comparable>::findMin() const
 template <typename Comparable>
 void BinomialQueue<Comparable>::insert(const Comparable &x)
 {
+    //构造函数会开辟内存
     BinomialQueue temp(x);
     merge(temp);
 }
@@ -108,7 +111,7 @@ Comparable BinomialQueue<Comparable>::deleteMin()
 
     //建立一个删除根节点后被打散的二项树的集合
     BinomialQueue deletedQueue;
-    deletedQueue.theTrees.resize(minIndex);
+    deletedQueue.theTrees.resize(minIndex);     //注意这里minIndex是下标
     // B_k 有 2^k 个结点，删除根后剩下 2^k - 1 个。
     deletedQueue.currentSize = (int)(std::pow(2, minIndex)) - 1;
 
@@ -157,10 +160,12 @@ void BinomialQueue<Comparable>::merge(BinomialQueue &rhs)
         int oldNumTrees = theTrees.size();
         int newNumTrees = std::max( theTrees.size(), rhs.theTrees.size() ) + 1;     //加一是为了防止二进制数进位
         theTrees.resize( newNumTrees );
+        //把新空间存储的指针置空
         for ( size_t i = oldNumTrees; i < newNumTrees; i++ )
             theTrees[i] = nullptr;
     }
 
+    //把两树合并想象为二进制加法
     BinomialNode * carry = nullptr;
     /* i：当前阶数，依次处理 B_0、B_1、B_2。
     j：这一阶树的结点数，依次为 1、2、4。
