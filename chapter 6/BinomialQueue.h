@@ -26,12 +26,13 @@ private:
     struct BinomialNode
     {
         Comparable element;
-        BinomialNode *firstChild;
+        BinomialNode *firstChild;   //最高阶孩子
         BinomialNode *nextSibling;
         BinomialNode(const Comparable &e, BinomialNode *lt, BinomialNode *rt);
         BinomialNode(Comparable &&e, BinomialNode *lt, BinomialNode *rt);
     };
 
+    //创建二项队列时默认有一棵树的位置
     static const int DEFAULT_TREES = 1;
     std::vector<BinomialNode *> theTrees;
     int currentSize;
