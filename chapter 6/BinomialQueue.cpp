@@ -90,6 +90,7 @@ void BinomialQueue<Comparable>::insert(const Comparable &x)
 template <typename Comparable>
 void BinomialQueue<Comparable>::insert(Comparable &&x)
 {
+    //由于没有右值引用版本的构造函数，所以需要创建一块内存
     BinomialQueue temp;
     temp.theTrees[0] = new BinomialNode(std::move(x), nullptr, nullptr);
     temp.currentSize = 1;
