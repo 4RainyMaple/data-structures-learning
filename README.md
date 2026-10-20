@@ -14,7 +14,7 @@
 相较于教材极其晦涩的文字解释算法，这门课程用黑板手写解析算法显然更有利于理解。
 
 ## 学习辅助工具：deepseek harness , codex  
-一个月100多就能获得顶级的学习服务，性价比远超北京某酒吧舞大学一年5000的学费。
+一个月100多就能获得顶级的学习服务，性价比远超北京某一年5000学费的酒吧舞大学。
 
 ## 刷题网站：LeetCode    
 [LeetCode练习记录](https://github.com/4RainyMaple/LeetCode-Practising)  
